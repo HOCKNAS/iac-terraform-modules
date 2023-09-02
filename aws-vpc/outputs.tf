@@ -164,6 +164,11 @@ output "private_subnets" {
   value       = aws_subnet.private[*].id
 }
 
+output "private_subnet_ids_one_per_az" {
+  value = slice(aws_subnet.private[*].id, 0,3)
+  description = "List of IDs of private subnets one per Available Zone"
+}
+
 output "private_subnet_arns" {
   description = "List of ARNs of private subnets"
   value       = aws_subnet.private[*].arn
