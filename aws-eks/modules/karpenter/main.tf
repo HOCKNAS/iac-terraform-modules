@@ -162,6 +162,67 @@ data "aws_iam_policy_document" "irsa" {
   }
 }
 
+resource "aws_iam_role_policy" "irsa" {
+
+  count = local.create_irsa ? 1 : 0
+  name  = "karpenter-inline-policy"
+  role  = aws_iam_role.this[0].id
+
+  policy = <<-EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Karpenter",
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameter",
+                "ec2:DescribeImages",
+                "ec2:RunInstances",
+                "ec2:DescribeSubnets",
+                "ec2:DescribeSecurityGroups",
+                "ec2:DescribeLaunchTemplates",
+                "ec2:DescribeInstances",
+                "ec2:DescribeInstanceTypes",
+                "ec2:DescribeInstanceTypeOfferings",
+                "ec2:DescribeAvailabilityZones",
+                "ec2:DeleteLaunchTemplate",
+                "ec2:CreateTags",
+                "ec2:CreateLaunchTemplate",
+                "ec2:CreateFleet",
+                "ec2:DescribeSpotPriceHistory",
+                "pricing:GetProducts"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "ConditionalEC2Termination",
+            "Effect": "Allow",
+            "Action": "ec2:TerminateInstances",
+            "Resource": "*",
+            "Condition": {
+                "StringLike": {
+                    "ec2:ResourceTag/karpenter.sh/provisioner-name": "*"
+                }
+            }
+        },
+        {
+            "Sid": "PassNodeIAMRole",
+            "Effect": "Allow",
+            "Action": "iam:PassRole",
+            "Resource": "*"
+        },
+        {
+            "Sid": "EKSClusterEndpointLookup",
+            "Effect": "Allow",
+            "Action": "eks:DescribeCluster",
+            "Resource": "*"
+        }
+    ]
+}
+EOF
+}
+
 resource "aws_iam_policy" "irsa" {
   count = local.create_irsa ? 1 : 0
 
