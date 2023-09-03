@@ -166,7 +166,7 @@ resource "aws_iam_role_policy" "irsa" {
 
   count = local.create_irsa ? 1 : 0
   name  = "karpenter-inline-policy"
-  role  = aws_iam_role.this[0].id
+  role  = aws_iam_role.irsa[0].id
 
   policy = <<-EOF
 {
