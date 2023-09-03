@@ -555,20 +555,20 @@ resource "kubernetes_config_map" "aws_auth" {
   }
 }
 
-resource "kubernetes_config_map_v1_data" "aws_auth" {
-  count = var.create && var.manage_aws_auth_configmap ? 1 : 0
+# resource "kubernetes_config_map_v1_data" "aws_auth" {
+#   count = var.create && var.manage_aws_auth_configmap ? 1 : 0
 
-  force = true
+#   force = true
 
-  metadata {
-    name      = "aws-auth"
-    namespace = "kube-system"
-  }
+#   metadata {
+#     name      = "aws-auth"
+#     namespace = "kube-system"
+#   }
 
-  data = local.aws_auth_configmap_data
+#   data = local.aws_auth_configmap_data
 
-  depends_on = [
-    # Required for instances where the configmap does not exist yet to avoid race condition
-    kubernetes_config_map.aws_auth,
-  ]
-}
+#   depends_on = [
+#     # Required for instances where the configmap does not exist yet to avoid race condition
+#     kubernetes_config_map.aws_auth,
+#   ]
+# }
