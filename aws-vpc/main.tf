@@ -155,6 +155,28 @@ resource "aws_route" "public_internet_gateway" {
   }
 }
 
+resource "aws_route" "custom_public_route" {
+  for_each = { for route in var.custom_public_route_table_routes : route["cidr_block"] => route }
+
+  route_table_id         = aws_route_table.public[0].id
+  destination_cidr_block = each.value.cidr_block
+
+  carrier_gateway_id        = lookup(each.value, "carrier_gateway_id", null)
+  core_network_arn          = lookup(each.value, "core_network_arn", null)
+  egress_only_gateway_id    = lookup(each.value, "egress_only_gateway_id", null)
+  gateway_id                = lookup(each.value, "gateway_id", null)
+  nat_gateway_id            = lookup(each.value, "nat_gateway_id", null)
+  local_gateway_id          = lookup(each.value, "local_gateway_id", null)
+  network_interface_id      = lookup(each.value, "network_interface_id", null)
+  transit_gateway_id        = lookup(each.value, "transit_gateway_id", null)
+  vpc_endpoint_id           = lookup(each.value, "vpc_endpoint_id", null)
+  vpc_peering_connection_id = lookup(each.value, "vpc_peering_connection_id", null)
+
+  timeouts {
+    create = "5m"
+  }
+}
+
 resource "aws_route" "public_internet_gateway_ipv6" {
   count = local.create_public_subnets && var.create_igw && var.enable_ipv6 ? 1 : 0
 
@@ -276,6 +298,28 @@ resource "aws_route_table_association" "private" {
     aws_route_table.private[*].id,
     var.single_nat_gateway ? 0 : count.index,
   )
+}
+
+resource "aws_route" "custom_private_route" {
+  for_each = { for route in var.custom_private_route_table_routes : route["cidr_block"] => route }
+
+  route_table_id         = aws_route_table.private[0].id
+  destination_cidr_block = each.value.cidr_block
+
+  carrier_gateway_id        = lookup(each.value, "carrier_gateway_id", null)
+  core_network_arn          = lookup(each.value, "core_network_arn", null)
+  egress_only_gateway_id    = lookup(each.value, "egress_only_gateway_id", null)
+  gateway_id                = lookup(each.value, "gateway_id", null)
+  nat_gateway_id            = lookup(each.value, "nat_gateway_id", null)
+  local_gateway_id          = lookup(each.value, "local_gateway_id", null)
+  network_interface_id      = lookup(each.value, "network_interface_id", null)
+  transit_gateway_id        = lookup(each.value, "transit_gateway_id", null)
+  vpc_endpoint_id           = lookup(each.value, "vpc_endpoint_id", null)
+  vpc_peering_connection_id = lookup(each.value, "vpc_peering_connection_id", null)
+
+  timeouts {
+    create = "5m"
+  }
 }
 
 ################################################################################

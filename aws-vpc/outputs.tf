@@ -165,7 +165,7 @@ output "private_subnets" {
 }
 
 output "private_subnet_ids_one_per_az" {
-  value = slice(aws_subnet.private[*].id, 0,3)
+  value       = slice(aws_subnet.private[*].id, 0, 3)
   description = "List of IDs of private subnets one per Available Zone"
 }
 

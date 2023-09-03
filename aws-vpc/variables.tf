@@ -1457,6 +1457,22 @@ variable "default_route_table_tags" {
 }
 
 ################################################################################
+# Custom Routes
+################################################################################
+
+variable "custom_public_route_table_routes" {
+  description = "Configuration block of routes. See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_route_table#route"
+  type        = list(map(string))
+  default     = []
+}
+
+variable "custom_private_route_table_routes" {
+  description = "Configuration block of routes. See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/default_route_table#route"
+  type        = list(map(string))
+  default     = []
+}
+
+################################################################################
 # Flow Log
 ################################################################################
 
